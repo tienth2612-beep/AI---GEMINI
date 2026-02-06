@@ -1,60 +1,35 @@
 "use client";
-import { Menu, Plus, MessageSquare, Settings, ChevronLeft, Sparkles, X } from "lucide-react";
+import { Menu, Plus, MessageSquare, Settings, ChevronLeft, X } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function Sidebar({ isOpen, setIsOpen, onNewChat, chats, currentId, onSelect }: any) {
+export function Sidebar({ isOpen, setIsOpen, onNewChat, chats, currentId, onSelect, onOpenSettings, onDeleteChat }: any) {
   return (
-    <motion.div 
-      animate={{ width: isOpen ? 280 : 72 }}
-      className="h-full bg-[#f9fbff] p-4 flex flex-col border-r border-gray-100 transition-all duration-500 relative overflow-hidden"
-    >
-      {/* Nút Menu: Luôn hiển thị để ấn ra/vào */}
+    <motion.div animate={{ width: isOpen ? 280 : 72 }} className="h-full bg-slate-50 p-4 flex flex-col border-r border-slate-200 relative overflow-hidden">
       <div className="flex items-center mb-8 h-10">
-        <button 
-          onClick={() => setIsOpen(!isOpen)} 
-          className="p-3 hover:bg-gray-200 rounded-full transition-all text-gray-500 active:scale-90"
-        >
+        <button onClick={() => setIsOpen(!isOpen)} className="p-3 hover:bg-slate-200 rounded-xl transition-all text-slate-500">
           {isOpen ? <ChevronLeft size={22} /> : <Menu size={22} />}
         </button>
-        
-        {isOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 ml-2">
-            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg"><Sparkles size={14} className="text-white fill-white" /></div>
-            <span className="font-black text-sm text-slate-800 uppercase tracking-tighter">Gemini Pro</span>
-          </motion.div>
-        )}
+        {isOpen && <span className="font-bold text-slate-800 ml-3 tracking-tighter italic uppercase">Gemini</span>}
       </div>
 
-      <button 
-        onClick={onNewChat}
-        className={`flex items-center gap-3 bg-white hover:bg-blue-50 border border-gray-200/60 p-4 rounded-2xl transition-all shadow-sm active:scale-95 group
-        ${!isOpen ? 'w-10 h-10 justify-center p-0 mx-auto' : 'w-full'}`}
-      >
-        <Plus size={20} className="text-blue-600 shrink-0" />
-        {isOpen && <span className="text-sm font-black text-slate-700">New Chat</span>}
+      <button onClick={onNewChat} className={`flex items-center gap-3 bg-white border border-slate-200 p-4 rounded-2xl shadow-sm hover:bg-slate-100 transition-all ${!isOpen ? 'w-10 h-10 justify-center p-0 mx-auto' : 'w-full'}`}>
+        <Plus size={20} className="text-blue-600" /> {isOpen && <span className="text-sm font-bold">New Chat</span>}
       </button>
 
-      <div className="flex-1 mt-10 space-y-2 overflow-y-auto custom-scrollbar pr-1">
-        {isOpen && <p className="text-[10px] font-black px-4 mb-5 text-gray-300 uppercase tracking-widest leading-none">History (Session)</p>}
+      <div className="flex-1 mt-8 space-y-2 overflow-y-auto custom-scrollbar pr-1">
         {chats.map((chat: any) => (
-          <div 
-            key={chat.id} onClick={() => onSelect(chat.id)} 
-            className={`flex items-center gap-4 p-3.5 rounded-2xl cursor-pointer transition-all border whitespace-nowrap overflow-hidden
-            ${currentId === chat.id ? 'bg-blue-50 border-blue-100 text-blue-700 font-bold' : 'hover:bg-gray-100/50 border-transparent text-gray-400'}
-            ${!isOpen ? 'justify-center mx-auto w-10 h-10 p-0' : ''}`}
-          >
-            <MessageSquare size={18} className="shrink-0" />
-            {isOpen && <span className="text-sm truncate font-bold">{chat.title}</span>}
+          <div key={chat.id} className="group relative">
+            <div onClick={() => onSelect(chat.id)} className={`flex items-center gap-4 p-3.5 rounded-2xl cursor-pointer border whitespace-nowrap overflow-hidden transition-all ${currentId === chat.id ? 'bg-blue-100/50 text-blue-700 font-bold border-transparent' : 'hover:bg-slate-200/50 border-transparent text-slate-500 font-bold'}`}>
+              <MessageSquare size={18} className="shrink-0" /> {isOpen && <span className="text-sm truncate pr-6">{chat.title}</span>}
+            </div>
+            {isOpen && <button onClick={(e) => { e.stopPropagation(); onDeleteChat(chat.id); }} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 opacity-0 group-hover:opacity-100 hover:bg-red-50 text-red-500 rounded-lg"><X size={14} /></button>}
           </div>
         ))}
       </div>
 
-      <div className="mt-auto pt-6 border-t border-gray-100">
-        <div className={`flex items-center gap-4 p-4 hover:bg-gray-100 rounded-2xl cursor-pointer transition-all ${!isOpen ? 'justify-center mx-auto w-10 h-10 p-0' : ''}`}>
-          <Settings size={20} className="text-gray-400 shrink-0" />
-          {isOpen && <span className="text-xs font-black text-gray-500 uppercase tracking-widest">Settings</span>}
-        </div>
-      </div>
+      <button onClick={onOpenSettings} className={`mt-auto flex items-center gap-4 p-4 hover:bg-slate-200 rounded-2xl w-full text-slate-500 transition-all ${!isOpen ? 'justify-center mx-auto w-10 h-10 p-0' : ''}`}>
+        <Settings size={20} className="shrink-0" /> {isOpen && <span className="text-sm font-black uppercase tracking-widest">Settings</span>}
+      </button>
     </motion.div>
   );
 }
